@@ -4,7 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 // const bodyParser = require("body-parser")
 
-app.use(cors({ credentials: true, origin: true }))
+app.use(cors({ credentials: true, origin: true, methods: ['GET', 'POST'] }))
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
@@ -13,7 +13,7 @@ app.use(express.json())
 app.use((req, res, next) => {
     res.setHeader(
         "Access-Control-Allow-Origin",
-        process.env.ORIGIN
+        "https://your-frontend.com"
     );
     res.setHeader(
         "Access-Control-Allow-Methods",
