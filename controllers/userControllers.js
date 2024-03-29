@@ -82,6 +82,7 @@ exports.updateProfile = asyncError(async (req, res) => {
 })
 
 exports.updateAvatar = asyncError(async (req, res) => {
+    console.log("req.file.path", req.file.path);
     const userResult = await cloudinary.uploader.upload(req.file.path, { folder: 'audiox/avatar', resource_type: 'auto' })
     const updatedUser = await userModel.findByIdAndUpdate(req.user_id, { avatar: userResult.secure_url }, { new: true })
     const user = {
