@@ -20,13 +20,17 @@ exports.getToken = async (req, res) => {
                 isAuthenticatd: false
             })
         }
-        res.status(200).cookie("token", token).json({
+        res.cookie("token", token, {
+            sameSite: 'none', // Allow cross-site requests
+            secure: true, // Only send cookie over HTTPS
+            maxAge: 100 * 60 * 1000 // Expiry time in milliseconds (100 minutes)
+        }).status(200).json({
             success: true,
             message: "Login success",
             isAuthenticated: true,
             user,
             token
-        })
+        });
     } catch (error) {
         return res.status(500).json({
             success: false,
