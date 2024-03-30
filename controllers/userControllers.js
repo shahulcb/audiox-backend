@@ -8,7 +8,7 @@ const cloudinary = require("../utils/cloudinary");
 exports.signUp = asyncError(async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
     if (password !== confirmPassword) {
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: "password desont match"
         })
@@ -16,7 +16,7 @@ exports.signUp = asyncError(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10)
     const newUser = await userModel.create({ username, email, password: hashedPassword })
     if (!newUser) {
-        return res.status(500).json({
+        return res.status(400).json({
             success: false,
             message: "Registration failed"
         })
@@ -51,21 +51,21 @@ exports.updateProfile = asyncError(async (req, res) => {
     const { username, email } = req.body;
     const isUsernameExist = await userModel.findOne({ username, _id: { $ne: req.user_id } })
     if (isUsernameExist) {
-        return res.status(401).json({
+        return res.status(400).json({
             success: false,
             message: "username is taken"
         })
     }
     const isEmailExist = await userModel.findOne({ email, _id: { $ne: req.user_id } })
     if (isEmailExist) {
-        return res.status(401).json({
+        return res.status(400).json({
             success: false,
             message: "email is taken"
         })
     }
     const updatedUser = await userModel.findOneAndUpdate({ _id: req.user_id }, { username, email }, { new: true })
     if (!updatedUser) {
-        return res.status(401).json({
+        return res.status(400).json({
             success: false,
             message: "user not updated"
         })
@@ -82,7 +82,6 @@ exports.updateProfile = asyncError(async (req, res) => {
 })
 
 exports.updateAvatar = asyncError(async (req, res) => {
-    console.log("req.file.path", req.file.path);
     const userResult = await cloudinary.uploader.upload(req.file.path, { folder: 'audiox/avatar', resource_type: 'auto' })
     const updatedUser = await userModel.findByIdAndUpdate(req.user_id, { avatar: userResult.secure_url }, { new: true })
     const user = {

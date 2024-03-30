@@ -12,12 +12,12 @@ exports.uploadSong = asyncError(async (req, res) => {
         const imageResult = await cloudinary.uploader.upload(imagePath, { folder: 'audiox/songs-image', resource_type: 'auto' })
         const newSong = await songModel.create({ title, genre, filePath: songResult.secure_url, bgImage: imageResult.secure_url, user: req.user_id })
         if (!newSong) {
-            return res.status(404).json({
+            return res.status(400).json({
                 success: false,
                 message: "Failed to upload song"
             })
         }
-        res.status(200).json({
+        res.status(201).json({
             success: true,
             message: "song uploaded"
         })
