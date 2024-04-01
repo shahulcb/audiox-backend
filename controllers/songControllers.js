@@ -2,6 +2,8 @@ const asyncError = require('express-async-handler');
 const songModel = require('../models/songModel');
 const playlistModel = require("../models/playlistModel")
 const cloudinary = require("../utils/cloudinary")
+const commentModel = require("../models/commentModel")
+const ratingModel = require("../models/ratingModel")
 
 exports.uploadSong = asyncError(async (req, res) => {
     const songPath = req.files['song'][0].path
@@ -64,6 +66,11 @@ exports.checkPlaylist = asyncError(async (req, res) => {
 
 exports.deleteMySong = asyncError(async (req, res) => {
     const { songId } = req.body
+
+    await Promise.all([
+        commentModel.deleteMany({ song: songId }),
+        ratingModel.deleteMany({ song: songId })
+    ]);
 
     const playlists = await playlistModel.find({ songs: songId })
 

@@ -7,8 +7,24 @@ const cloudinary = require("../utils/cloudinary");
 
 exports.signUp = asyncError(async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
+    const usernameExist = await userModel.findOne({ username })
+    const emailExist = await userModel.findOne({ email })
+
+    if (usernameExist) {
+        return res.status(201).json({
+            success: false,
+            message: "username already taken"
+        })
+    }
+    if (emailExist) {
+        return res.status(201).json({
+            success: false,
+            message: "email already taken"
+        })
+    }
+
     if (password !== confirmPassword) {
-        return res.status(400).json({
+        return res.status(201).json({
             success: false,
             message: "password desont match"
         })
